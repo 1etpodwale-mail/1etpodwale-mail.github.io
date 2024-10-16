@@ -3,32 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Email</title>
+    <title>Request Custom @1et.com Email</title>
 </head>
 <body>
 
-    <h1>Send an Email from @1et.com</h1>
+    <h1>Request Your Custom @1et.com Email Address</h1>
 
-    <form id="email-form">
-        <label for="to">To:</label>
-        <input type="email" id="to" name="to" required><br><br>
+    <form id="email-request-form">
+        <label for="username">Choose a username (e.g., john@1et.com):</label><br>
+        <input type="text" id="username" name="username" placeholder="Enter username" required><br><br>
 
-        <label for="subject">Subject:</label>
-        <input type="text" id="subject" name="subject" required><br><br>
-
-        <label for="body">Message:</label>
-        <textarea id="body" name="body" required></textarea><br><br>
-
-        <button type="submit">Send Email</button>
+        <button type="submit">Request Email Address</button>
     </form>
 
     <div id="status"></div>
 
-    <!-- Include EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS User ID
+        })();
 
-    <!-- Your custom JavaScript -->
-    <script src="sendEmail.js"></script>
+        document.getElementById('email-request-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const statusDiv = document.getElementById('status');
+
+            // Validate username (only alphanumeric characters)
+            if (!/^[a-zA-Z0-9]+$/.test(username)) {
+                statusDiv.innerHTML = '<p>Invalid username. Only letters and numbers are allowed.</p>';
+                return;
+            }
+
+            const templateParams = {
+                username: username,
+                custom_email: `${username}@1et.com`
+            };
+
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    statusDiv.innerHTML = `<p>Email request for ${templateParams.custom_email} sent successfully!</p>`;
+                }, function(error) {
+                    console.error('FAILED...', error);
+                    statusDiv.innerHTML = '<p>Failed to send request. Please try again.</p>';
+                });
+        });
+    </script>
 
 </body>
 </html>
